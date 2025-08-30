@@ -5,17 +5,13 @@ import Image from "next/image";
 
 /* ---------------- helpers ---------------- */
 function useLocalStorageState(key, initialValue) {
-  // 1) render the same on server and first client render
   const [state, setState] = React.useState(initialValue);
-  // 2) after mount, read from localStorage
   React.useEffect(() => {
     try {
       const raw = localStorage.getItem(key);
       if (raw != null) setState(JSON.parse(raw));
     } catch {}
-    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [key]);
-  // 3) persist on change
   React.useEffect(() => {
     try {
       localStorage.setItem(key, JSON.stringify(state));
@@ -60,7 +56,7 @@ const NMCLE_CLASSES = [
 /* ================= PAGE ================= */
 export default function Home() {
   return (
-    <div className="min-h-screen bg-neutral-950 text-white">
+    <div className="min-h-screen bg-white text-black">
       <TopNav />
       <main className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8 pt-24 space-y-24">
         <Hero />
@@ -89,12 +85,12 @@ function TopNav() {
     ["Blog", "#blogs"],
   ];
   return (
-    <header className="fixed inset-x-0 top-0 z-50 bg-neutral-900/70 backdrop-blur border-b border-white/10">
+    <header className="fixed inset-x-0 top-0 z-50 bg-white backdrop-blur border-b border-white/10">
       <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8 h-16 flex items-center justify-between">
         <div className="font-extrabold tracking-wide">StudyHub</div>
         <nav className="hidden md:flex gap-6 text-sm">
           {links.map(([label, href]) => (
-            <a key={href} href={href} className="hover:text-pink-400">{label}</a>
+            <a key={href} href={href} className="hover:text-[#F4C986]">{label}</a>
           ))}
         </nav>
       </div>
@@ -104,7 +100,7 @@ function TopNav() {
 
 function Hero() {
   return (
-    <section className="relative rounded-3xl overflow-hidden bg-neutral-900 ring-1 ring-white/10">
+    <section className="relative rounded-3xl overflow-hidden bg-white ring-1 ring-white/10">
       <div
         className="absolute inset-0 bg-cover bg-center"
         style={{
@@ -113,117 +109,23 @@ function Hero() {
           filter: "brightness(0.55)",
         }}
       />
-      <div className="relative px-8 py-20 md:py-28 text-center">
+      <div className="relative px-8 py-20 md:py-28 text-center text-white">
         <h1 className="text-4xl md:text-6xl font-extrabold">Book • Study • Succeed</h1>
-        <p className="mt-4 max-w-3xl mx-auto text-white/80">
+        <p className="mt-4 max-w-3xl mx-auto ">
           Pictures of rooms, a 2D seat map, payments, memberships & reminders — plus classes, mock tests, and a blog.
         </p>
         <div className="mt-8 flex justify-center gap-3">
-          <a href="#booking" className="px-5 py-2.5 rounded-md bg-pink-500 hover:bg-pink-600 font-semibold">Book a Seat</a>
-          <a href="#classes" className="px-5 py-2.5 rounded-md bg-white/10 hover:bg-white/20 font-semibold">See Classes</a>
+          <a href="#booking" className="px-5 py-2.5 rounded-md bg-[#F4C986]  font-semibold hover:brightness-95">
+            Book a Seat
+          </a>
+          <a href="#classes" className="px-5 py-2.5 rounded-md bg-white/10 hover:bg-white/20 font-semibold">
+            See Classes
+          </a>
         </div>
       </div>
     </section>
   );
 }
-
-/* ================= BOOKING SYSTEM ================= */
-// function BookingSystem() {
-//   const rows = 6, cols = 8;
-//   const [seats, setSeats] = useLocalStorageState("seats", Array.from({ length: rows * cols }, () => 0));
-//   const [customer, setCustomer] = useLocalStorageState("customer", {
-//     name: "", phone: "", education: "", address: "",
-//     membershipStart: "", membershipEnd: "", renewalDate: "",
-//   });
-//   const [payment, setPayment] = useLocalStorageState("payment", { plan: "Monthly", amount: "", due: "" });
-
-//   const toggleSeat = (i) => setSeats((prev) => {
-//     const copy = [...prev]; copy[i] = copy[i] === 1 ? 0 : 1; return copy;
-//   });
-
-//   // compute renewal banner only once client has values (prevents SSR/client date mismatch)
-//   const [showRenewal, setShowRenewal] = React.useState(false);
-//   const [daysToRenewal, setDaysToRenewal] = React.useState(null);
-//   React.useEffect(() => {
-//     if (!customer.renewalDate) { setDaysToRenewal(null); setShowRenewal(false); return; }
-//     const diff = Math.ceil((new Date(customer.renewalDate) - new Date()) / (1000 * 60 * 60 * 24));
-//     setDaysToRenewal(diff);
-//     setShowRenewal(true);
-//   }, [customer.renewalDate]);
-
-//   return (
-//     <section id="booking" className="space-y-10">
-//       <h2 className="text-2xl md:text-3xl font-extrabold">Booking System</h2>
-
-//       <div className="grid grid-cols-2 md:grid-cols-4 gap-3">
-//         {BOOKING_ROOM_IMGS.map((src, i) => (
-//           <div key={i} className="aspect-video rounded-xl overflow-hidden ring-1 ring-white/10">
-//             <img className="h-full w-full object-cover" src={src} alt={`Room ${i + 1}`} />
-//           </div>
-//         ))}
-//       </div>
-
-//       <div className="grid lg:grid-cols-2 gap-8">
-//         <div className="rounded-2xl p-6 bg-neutral-900 ring-1 ring-white/10">
-//           <div className="flex items-center justify-between mb-4">
-//             <h3 className="font-bold text-lg">Seat Map</h3>
-//             <div className="flex items-center gap-3 text-sm">
-//               <span className="inline-flex items-center gap-2"><Dot className="bg-emerald-500" /> Available</span>
-//               <span className="inline-flex items-center gap-2"><Dot className="bg-pink-500" /> Booked</span>
-//             </div>
-//           </div>
-//           <div className="grid gap-2" style={{ gridTemplateColumns: `repeat(${cols}, minmax(0,1fr))` }}>
-//             {Array.from({ length: rows * cols }).map((_, i) => {
-//               const booked = seats[i] === 1;
-//               return (
-//                 <button
-//                   key={i}
-//                   onClick={() => toggleSeat(i)}
-//                   className={`aspect-square rounded-md text-xs font-semibold grid place-items-center ${booked ? "bg-pink-500" : "bg-emerald-600"} hover:opacity-90`}
-//                 >
-//                   {i + 1}
-//                 </button>
-//               );
-//             })}
-//           </div>
-//           <div className="mt-4 text-sm text-white/80">
-//             Selected seats: {seats.reduce((a, b) => a + (b === 1 ? 1 : 0), 0)}
-//           </div>
-//         </div>
-
-//         <div className="space-y-6">
-//           <div className="rounded-2xl p-6 bg-neutral-900 ring-1 ring-white/10">
-//             <h3 className="font-bold text-lg mb-4">Customer Details</h3>
-//             <div className="grid md:grid-cols-2 gap-4">
-//               <Input label="Name" value={customer.name} onChange={(v)=>setCustomer({...customer,name:v})} />
-//               <Input label="Phone" value={customer.phone} onChange={(v)=>setCustomer({...customer,phone:v})} />
-//               <Input label="Education" value={customer.education} onChange={(v)=>setCustomer({...customer,education:v})} />
-//               <Input label="Address" value={customer.address} onChange={(v)=>setCustomer({...customer,address:v})} />
-//               <Input type="date" label="Membership Start" value={customer.membershipStart} onChange={(v)=>setCustomer({...customer,membershipStart:v})} />
-//               <Input type="date" label="Membership End" value={customer.membershipEnd} onChange={(v)=>setCustomer({...customer,membershipEnd:v})} />
-//               <Input type="date" label="Renewal Date" value={customer.renewalDate} onChange={(v)=>setCustomer({...customer,renewalDate:v})} />
-//             </div>
-//           </div>
-
-//           <div className="rounded-2xl p-6 bg-neutral-900 ring-1 ring-white/10">
-//             <h3 className="font-bold text-lg mb-4">Payments</h3>
-//             <div className="grid md:grid-cols-3 gap-4">
-//               <Select label="Plan" options={["Monthly","Quarterly","Yearly"]} value={payment.plan} onChange={(v)=>setPayment({...payment,plan:v})} />
-//               <Input label="Amount" placeholder="e.g., 1999" value={payment.amount} onChange={(v)=>setPayment({...payment,amount:v})} />
-//               <Input type="date" label="Payment Due" value={payment.due} onChange={(v)=>setPayment({...payment,due:v})} />
-//             </div>
-//           </div>
-
-//           {showRenewal && (
-//             <div className={`rounded-xl p-4 text-sm ${daysToRenewal <= 7 ? "bg-amber-500/20 text-amber-200" : "bg-emerald-600/20 text-emerald-200"}`}>
-//               {daysToRenewal < 0 ? "Membership renewal date has passed." : `Membership renews in ${daysToRenewal} day${daysToRenewal === 1 ? "" : "s"}.`}
-//             </div>
-//           )}
-//         </div>
-//       </div>
-//     </section>
-//   );
-// }
 
 /* ================= CLASSES ================= */
 function Classes() {
@@ -236,13 +138,29 @@ function Classes() {
     <section id="classes" className="space-y-6">
       <div className="flex items-end justify-between gap-4">
         <h2 className="text-2xl md:text-3xl font-extrabold">Classes</h2>
-        <div className="inline-flex rounded-lg bg-neutral-900 ring-1 ring-white/10 p-1">
-          <button onClick={() => setTab("reading")} className={`px-3 py-1.5 rounded-md text-sm font-medium ${tab === "reading" ? "bg-pink-500" : "hover:bg-white/10"}`}>Reading room</button>
-          <button onClick={() => setTab("nmcle")} className={`px-3 py-1.5 rounded-md text-sm font-medium ${tab === "nmcle" ? "bg-pink-500" : "hover:bg-white/10"}`}>NMCLÉ classes</button>
+        <div className="inline-flex rounded-lg bg-white ring-1 ring-white/10 p-1">
+          <button
+            onClick={() => setTab("reading")}
+            className={`px-3 py-1.5 rounded-md text-sm font-medium ${
+              tab === "reading" ? "bg-[#F4C986] text-black" : "hover:bg-white/10"
+            }`}
+          >
+            Reading room
+          </button>
+          <button
+            onClick={() => setTab("nmcle")}
+            className={`px-3 py-1.5 rounded-md text-sm font-medium ${
+              tab === "nmcle" ? "bg-[#F4C986] text-black" : "hover:bg-white/10"
+            }`}
+          >
+            NMCLÉ classes
+          </button>
         </div>
       </div>
 
-      <p className="text-white/70 text-sm">Click <span className="text-pink-400 font-semibold">Book now</span> to open the seat map and payment for that class.</p>
+      <p className="text-blacktext-sm">
+        Click <span className="text-[#F4C986] font-semibold">Book now</span> to open the seat map and payment for that class.
+      </p>
 
       <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-5">
         {items.map((cls) => (
@@ -261,7 +179,7 @@ function ClassCard({ cls, onBook }) {
   const available = total - booked;
 
   return (
-    <div className="overflow-hidden rounded-2xl bg-neutral-900 ring-1 ring-white/10">
+    <div className="overflow-hidden rounded-2xl bg-white ring-1 ring-white/10">
       <div className="aspect-[16/9]">
         <img src={cls.img} alt={cls.name} className="w-full h-full object-cover" />
       </div>
@@ -269,19 +187,26 @@ function ClassCard({ cls, onBook }) {
         <div className="flex items-start justify-between gap-3">
           <div>
             <div className="text-lg font-bold">{cls.name}</div>
-            <div className="text-sm text-white/60">{cls.time}</div>
+            <div className="text-sm text-black">{cls.time}</div>
           </div>
           <div className="text-right">
-            <div className="text-pink-400 font-semibold">Rs {cls.priceNpr}</div>
-            <div className="text-xs text-white/60">per seat</div>
+            <div className="text-[#F4C986] font-semibold">Rs {cls.priceNpr}</div>
+            <div className="text-xs text-black">per seat</div>
           </div>
         </div>
-        <div className="flex items-center justify-between text-sm text-white/70 pt-2">
+        <div className="flex items-center justify-between text-sm text-blackpt-2">
           <span>Slots available</span>
-          <span className={`font-semibold ${available > 0 ? "text-emerald-300" : "text-rose-300"}`}>{available} / {total}</span>
+          <span className={`font-semibold ${available > 0 ? "text-emerald-300" : "text-rose-300"}`}>
+            {available} / {total}
+          </span>
         </div>
         <div className="pt-3">
-          <button onClick={onBook} className="w-full px-4 py-2 rounded-md bg-pink-500 hover:bg-pink-600 font-semibold">Book now</button>
+          <button
+            onClick={onBook}
+            className="w-full px-4 py-2 rounded-md bg-[#F4C986] text-black font-semibold hover:brightness-95"
+          >
+            Book now
+          </button>
         </div>
       </div>
     </div>
@@ -315,22 +240,22 @@ function BookingPanel({ cls, onClose }) {
   return (
     <div className="fixed inset-0 z-[60]">
       <div className="absolute inset-0 bg-black/60" onClick={onClose} />
-      <div className="absolute inset-y-0 right-0 w-full max-w-3xl bg-neutral-950 ring-1 ring-white/10 p-6 overflow-y-auto">
+      <div className="absolute inset-y-0 right-0 w-full max-w-3xl bg-white ring-1 ring-white/10 p-6 overflow-y-auto">
         <div className="flex items-start justify-between gap-3">
           <div>
             <div className="text-xl font-bold">{cls.name}</div>
-            <div className="text-sm text-white/60">{cls.time}</div>
+            <div className="text-sm text-black">{cls.time}</div>
           </div>
-        <button onClick={onClose} className="text-white/70 hover:text-white">Close</button>
+          <button onClick={onClose} className="text-blackhover:text-black">Close</button>
         </div>
 
         <div className="mt-4 grid lg:grid-cols-2 gap-6">
-          <div className="rounded-xl p-4 bg-neutral-900 ring-1 ring-white/10">
+          <div className="rounded-xl p-4 bg-white ring-1 ring-white/10">
             <div className="flex items-center justify-between mb-3">
               <div className="font-semibold">Seat map</div>
               <div className="flex items-center gap-3 text-xs">
                 <LegendDot color="bg-emerald-500" label="Available" />
-                <LegendDot color="bg-pink-500" label="Booked" />
+                <LegendDot color="bg-rose-500" label="Booked" />
                 <LegendDot color="bg-yellow-400" label="Selected" />
               </div>
             </div>
@@ -344,7 +269,13 @@ function BookingPanel({ cls, onClose }) {
                     key={i}
                     onClick={() => toggleSeat(i)}
                     disabled={isBooked}
-                    className={`aspect-square rounded-md text-xs font-semibold grid place-items-center ${isBooked ? "bg-pink-500 cursor-not-allowed" : isSelected ? "bg-yellow-400 text-black" : "bg-emerald-600 hover:opacity-90"}`}
+                    className={`aspect-square rounded-md text-xs font-semibold grid place-items-center ${
+                      isBooked
+                        ? "bg-rose-500 cursor-not-allowed"
+                        : isSelected
+                        ? "bg-yellow-400 text-black"
+                        : "bg-emerald-600 hover:opacity-90"
+                    }`}
                     title={isBooked ? "Already booked" : "Toggle seat"}
                   >
                     {i + 1}
@@ -353,11 +284,13 @@ function BookingPanel({ cls, onClose }) {
               })}
             </div>
 
-            <div className="mt-3 text-sm text-white/80">Available: {available} / {totalSeats} • Selected: {selected.length}</div>
+            <div className="mt-3 text-sm text-black">
+              Available: {available} / {totalSeats} • Selected: {selected.length}
+            </div>
           </div>
 
           <div className="space-y-4">
-            <div className="rounded-xl p-4 bg-neutral-900 ring-1 ring-white/10">
+            <div className="rounded-xl p-4 bg-white ring-1 ring-white/10">
               <div className="font-semibold mb-3">Your details</div>
               <div className="grid sm:grid-cols-2 gap-3">
                 <Input label="Full name" value={customer.name} onChange={(v)=>setCustomer({...customer,name:v})} />
@@ -366,16 +299,29 @@ function BookingPanel({ cls, onClose }) {
               </div>
             </div>
 
-            <div className="rounded-xl p-4 bg-neutral-900 ring-1 ring-white/10">
+            <div className="rounded-xl p-4 bg-white ring-1 ring-white/10">
               <div className="font-semibold mb-3">Payment</div>
               <div className="flex items-center justify-between">
-                <div className="text-white/75 text-sm">Rs {cls.priceNpr} × {selected.length} seat{selected.length === 1 ? "" : "s"}</div>
+                <div className="text-black text-sm">
+                  Rs {cls.priceNpr} × {selected.length} seat{selected.length === 1 ? "" : "s"}
+                </div>
                 <div className="text-lg font-bold">Total: Rs {totalPrice}</div>
               </div>
-              <div className="mt-3 text-xs text-white/50">(Demo only — connect to your payment gateway/API.)</div>
+              <div className="mt-3 text-xs text-black">(Demo only — connect to your payment gateway/API.)</div>
               <div className="mt-4 flex gap-2">
-                <button onClick={confirmBooking} disabled={selected.length === 0 || !customer.name || !customer.phone} className="px-4 py-2 rounded-md bg-pink-500 hover:bg-pink-600 font-semibold disabled:opacity-50">Confirm & Book</button>
-                <button onClick={onClose} className="px-4 py-2 rounded-md bg-white/10 hover:bg-white/15">Cancel</button>
+                <button
+                  onClick={confirmBooking}
+                  disabled={selected.length === 0 || !customer.name || !customer.phone}
+                  className="px-4 py-2 rounded-md bg-[#F4C986] text-black font-semibold hover:brightness-95 disabled:opacity-50"
+                >
+                  Confirm & Book
+                </button>
+                <button
+                  onClick={onClose}
+                  className="px-4 py-2 rounded-md bg-white/10 hover:bg-white/15"
+                >
+                  Cancel
+                </button>
               </div>
             </div>
 
@@ -394,7 +340,7 @@ function Gallery() {
   return (
     <section id="gallery" className="space-y-6">
       <h2 className="text-2xl md:text-3xl font-extrabold">Gallery</h2>
-      <p className="text-white/70 text-sm">Swap these with your Google Drive images (sorted by room numbers).</p>
+      <p className="text-blacktext-sm">Swap these with your Google Drive images (sorted by room numbers).</p>
       <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-3">
         {Array.from({ length: 8 }).map((_, i) => (
           <div key={i} className="aspect-[4/3] overflow-hidden rounded-xl ring-1 ring-white/10">
@@ -410,7 +356,7 @@ function About() {
   return (
     <section id="about" className="space-y-4">
       <h2 className="text-2xl md:text-3xl font-extrabold">About us</h2>
-      <p className="text-white/80">Placeholder for your script. Send it and we’ll drop it here.</p>
+      <p className="text-black">Placeholder for your script. Send it and we’ll drop it here.</p>
     </section>
   );
 }
@@ -419,12 +365,14 @@ function Contact() {
   return (
     <section id="contact" className="space-y-4">
       <h2 className="text-2xl md:text-3xl font-extrabold">Contact for reservations</h2>
-      <div className="space-y-1 text-white/85">
+      <div className="space-y-1 text-black">
         <div>Sano Kharibot, Shantinagar</div>
-        <a className="text-pink-400 hover:underline" href="tel:+9779861408529">9861408529</a>
+        <a className="text-[#F4C986] hover:brightness-95" href="tel:+9779861408529">9861408529</a>
       </div>
       <div className="mt-4">
-        <a href="#booking" className="px-5 py-2.5 rounded-md bg-pink-500 hover:bg-pink-600 font-semibold">Book now</a>
+        <a href="#booking" className="px-5 py-2.5 rounded-md bg-[#F4C986] text-black font-semibold hover:brightness-95">
+          Book now
+        </a>
       </div>
     </section>
   );
@@ -442,7 +390,7 @@ function Services() {
       <ServiceCard
         title="NMCLÉ classes"
         media={
-          <div className="w-full h-full flex items-center justify-center bg-neutral-900">
+          <div className="w-full h-full flex items-center justify-center bg-white">
             <iframe
               className="w-full h-full"
               src="https://www.youtube.com/embed/dQw4w9WgXcQ"
@@ -462,14 +410,16 @@ function Services() {
       <ServiceCard title="Mock tests" media={<img className="w-full h-full object-cover" src="https://picsum.photos/id/1015/1200/700" alt="Mock test" />}>
         <div className="space-y-3 leading-7">
           <p>Timed tests with instant scoring and analytics.</p>
-          <div className="rounded-lg bg-neutral-900 ring-1 ring-white/10 p-4">
+          <div className="rounded-lg bg-white ring-1 ring-white/10 p-4">
             <div className="font-semibold mb-1">Sample mock test</div>
-            <p className="text-sm text-white/75">Link a Google Form or your own test system.</p>
-            <a className="mt-3 inline-block px-4 py-2 rounded-md bg-pink-500 hover:bg-pink-600 font-semibold" href="#">Try sample</a>
+            <p className="text-sm ">Link a Google Form or your own test system.</p>
+            <a className="mt-3 inline-block px-4 py-2 rounded-md bg-[#F4C986]  font-semibold hover:brightness-95" href="#">
+              Try sample
+            </a>
           </div>
           <div>
             <div className="font-semibold">Subscription details</div>
-            <p className="text-sm text-white/75">Monthly / Quarterly / Yearly with student discounts.</p>
+            <p className="text-sm ">Monthly / Quarterly / Yearly with student discounts.</p>
           </div>
         </div>
       </ServiceCard>
@@ -479,12 +429,12 @@ function Services() {
 
 function ServiceCard({ title, media, children }) {
   return (
-    <div className="rounded-2xl overflow-hidden ring-1 ring-white/10 bg-neutral-950">
+    <div className="rounded-2xl overflow-hidden ring-1 ring-white/10 ">
       <div className="grid md:grid-cols-2">
         <div className="aspect-video md:aspect-auto md:h-full">{media}</div>
         <div className="p-6 md:p-8">
           <h3 className="text-xl md:text-2xl font-bold mb-4">{title}</h3>
-          <div className="text-white/85">{children}</div>
+          <div className="text-black">{children}</div>
         </div>
       </div>
     </div>
@@ -493,7 +443,6 @@ function ServiceCard({ title, media, children }) {
 
 /* ================= BLOGS ================= */
 function Blogs() {
-  // Start empty for SSR parity; load posts after mount
   const [posts, setPosts] = useLocalStorageState("posts", []);
   const [draft, setDraft] = React.useState({ title: "", content: "" });
 
@@ -510,31 +459,32 @@ function Blogs() {
     <section id="blogs" className="space-y-6">
       <h2 className="text-2xl md:text-3xl font-extrabold">Blog</h2>
 
-      <div className="rounded-2xl p-6 bg-neutral-900 ring-1 ring-white/10">
+      <div className="rounded-2xl p-6 bg-white ring-1 ring-white/10">
         <div className="grid md:grid-cols-2 gap-4">
           <Input label="Title" value={draft.title} onChange={(v)=>setDraft({...draft,title:v})} />
           <div className="md:col-span-2">
-            <Textarea label="Content" rows={5} value={draft.content} onChange={(v)=>setDraft({...draft,content:v})} />
+            <Textarea   label="Content" rows={5} value={draft.content} onChange={(v)=>setDraft({...draft,content:v})} />
           </div>
         </div>
         <div className="mt-4">
-          <button onClick={addPost} className="px-4 py-2 rounded-md bg-pink-500 hover:bg-pink-600 font-semibold">Publish</button>
+          <button onClick={addPost} className="px-4 py-2 rounded-md bg-[#F4C986] text-black font-semibold hover:brightness-95">
+            Publish
+          </button>
         </div>
       </div>
 
       {posts.length === 0 ? (
-        <p className="text-white/70">No posts yet. Write your first blog above.</p>
+        <p className="text-black">No posts yet. Write your first blog above.</p>
       ) : (
         <div className="grid md:grid-cols-2 gap-4">
           {posts.map((p) => (
-            <article key={p.id} className="rounded-xl p-5 bg-neutral-900 ring-1 ring-white/10">
+            <article key={p.id} className="rounded-xl p-5 bg-white ring-1 ring-white/10">
               <div className="flex items-start justify-between gap-3">
                 <h4 className="text-lg font-bold">{p.title}</h4>
-                <button onClick={() => removePost(p.id)} className="text-sm text-white/60 hover:text-white">Remove</button>
+                <button onClick={() => removePost(p.id)} className="text-sm text-black hover:text-black">Remove</button>
               </div>
-              {/* Rendered only on client after posts load, so locale formatting is safe */}
-              <div className="text-xs text-white/50 mt-1">{new Date(p.createdAt).toLocaleString()}</div>
-              <p className="mt-3 text-white/85 whitespace-pre-wrap">{p.content}</p>
+              <div className="text-xs text-black mt-1">{new Date(p.createdAt).toLocaleString()}</div>
+              <p className="mt-3 text-black whitespace-pre-wrap">{p.content}</p>
             </article>
           ))}
         </div>
@@ -546,7 +496,7 @@ function Blogs() {
 /* ================= FOOTER & UI ================= */
 function Footer() {
   return (
-    <footer className="py-10 text-center text-white/60">
+    <footer className="py-10 text-center text-black">
       © {new Date().getFullYear()} StudyHub • All rights reserved.
     </footer>
   );
@@ -555,13 +505,13 @@ function Footer() {
 function Input({ label, value, onChange, type = "text", placeholder }) {
   return (
     <label className="block">
-      <div className="text-sm mb-1 text-white/70">{label}</div>
+      <div className="text-sm mb-1 text-black">{label}</div>
       <input
         type={type}
         value={value}
         placeholder={placeholder}
         onChange={(e) => onChange(e.target.value)}
-        className="w-full rounded-md bg-neutral-800 border border-white/10 px-3 py-2 outline-none focus:ring-2 focus:ring-pink-500"
+        className="w-full rounded-md  border border-[#F4C986] px-3 py-2 outline-none focus:ring-2 focus:ring-[#F4C986]"
       />
     </label>
   );
@@ -569,12 +519,12 @@ function Input({ label, value, onChange, type = "text", placeholder }) {
 function Textarea({ label, value, onChange, rows = 4 }) {
   return (
     <label className="block">
-      <div className="text-sm mb-1 text-white/70">{label}</div>
+      <div className="text-sm mb-1 text-black">{label}</div>
       <textarea
         rows={rows}
         value={value}
         onChange={(e) => onChange(e.target.value)}
-        className="w-full rounded-md bg-neutral-800 border border-white/10 px-3 py-2 outline-none focus:ring-2 focus:ring-pink-500"
+        className="w-full rounded-md  border border-[#F4C986] px-3 py-2 outline-none focus:ring-2 focus:ring-[#F4C986]"
       />
     </label>
   );
@@ -582,11 +532,11 @@ function Textarea({ label, value, onChange, rows = 4 }) {
 function Select({ label, value, onChange, options = [] }) {
   return (
     <label className="block">
-      <div className="text-sm mb-1 text-white/70">{label}</div>
+      <div className="text-sm mb-1 text-black">{label}</div>
       <select
         value={value}
         onChange={(e) => onChange(e.target.value)}
-        className="w-full rounded-md bg-neutral-800 border border-white/10 px-3 py-2 outline-none focus:ring-2 focus:ring-pink-500"
+        className="w-full rounded-md bg-neutral-800 border border-white/10 px-3 py-2 outline-none focus:ring-2 focus:ring-[#F4C986]"
       >
         {options.map((o) => <option key={o} value={o}>{o}</option>)}
       </select>
